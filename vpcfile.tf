@@ -65,7 +65,7 @@ resource "aws_route_table" "pvt-route" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    vpc_peering_connection_id = aws_vpc_peering_connection.mypeer.id
+    #vpc_peering_connection_id = aws_vpc_peering_connection.mypeer.id
   }
   tags = {
     Name = "private-route"
@@ -136,7 +136,7 @@ resource "aws_security_group" "pvt-sg" {
   }
 
   tags = {
-    Name = "prvt-sg"
+    Name = "prvt-sgq"
   }
 }
 
