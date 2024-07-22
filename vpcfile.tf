@@ -65,8 +65,8 @@ resource "aws_route_table" "pvt-route" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_nat_gateway.ngw.id
-    #vpc_peering_connection_id = aws_vpc_peering_connection.mypeer.id
+    # gateway_id = aws_nat_gateway.ngw.id
+    vpc_peering_connection_id = aws_vpc_peering_connection.mypeer.id
   }
   tags = {
     Name = "private-route"
@@ -175,7 +175,7 @@ resource "aws_internet_gateway" "igw" {
     Name = "myigw"
   }
 }
-# EIP                                # Must Read Before Delete This
+# EIP # Must Read Before Delete This
 resource "aws_eip" "myeip" {
   vpc   =  true
 }
@@ -190,91 +190,91 @@ resource "aws_nat_gateway" "ngw" {
 }
 
 # Create 2nd VPC For Peering Connection
-# resource "aws_vpc" "peervpc" {
-#   cidr_block = "11.0.0.0/16"
-# }
+resource "aws_vpc" "peervpc" {
+  cidr_block = "11.0.0.0/16"
+}
 
 # Create Peering Subnet
-# resource "aws_subnet" "peer-subnet" {
-#   vpc_id     = aws_vpc.peervpc.id
-#   cidr_block = "11.0.1.0/24"
-#   availability_zone = "ap-south-1a"
+resource "aws_subnet" "peer-subnet" {
+  vpc_id     = aws_vpc.peervpc.id
+  cidr_block = "11.0.1.0/24"
+  availability_zone = "ap-south-1a"
 
-#   tags = {
-#     Name = "Peering-subnet"
-#   }
-# }
+  tags = {
+    Name = "Peering-subnet"
+  }
+}
 
-#Route Table For Peering Connection
-# resource "aws_route_table" "peer-route" {
-#   vpc_id = aws_vpc.peervpc.id
+# Route Table For Peering Connection
+resource "aws_route_table" "peer-route" {
+  vpc_id = aws_vpc.peervpc.id
 
-#   route {
-#     cidr_block = "0.0.0.0/0"
-#     vpc_peering_connection_id = aws_vpc_peering_connection.mypeer.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    vpc_peering_connection_id = aws_vpc_peering_connection.mypeer.id
     
-#   }
-#   tags = {
-#     Name = "Peer-route"
-#   }
-#   # depends_on = [aws_internet_gateway.igw]
-# }
+  }
+  tags = {
+    Name = "Peer-route"
+  }
+  # depends_on = [aws_internet_gateway.igw]
+}
 
 # Route Table Association for Peering Connection
-# resource "aws_route_table_association" "peer-route-ass" {
-#   subnet_id      = aws_subnet.peer-subnet.id
-#   route_table_id = aws_route_table.peer-route.id
-# }
+resource "aws_route_table_association" "peer-route-ass" {
+  subnet_id      = aws_subnet.peer-subnet.id
+  route_table_id = aws_route_table.peer-route.id
+}
 
 # Create Peering Connection Sec-Group
-# resource "aws_security_group" "peer-sg" {
-#   name        = "peer-sg"
-#   description = "Allow TLS inbound traffic for private sg"
-#   vpc_id      = aws_vpc.peervpc.id
+resource "aws_security_group" "peer-sg" {
+  name        = "peer-sg"
+  description = "Allow TLS inbound traffic for private sg"
+  vpc_id      = aws_vpc.peervpc.id
 
-#   ingress {
-#     description      = "TLS from VPC"
-#     from_port        = 22
-#     to_port          = 22
-#     protocol         = "tcp"
-#     cidr_blocks      = ["0.0.0.0/0"]
-#     # ipv6_cidr_blocks = [aws_vpc.main.ipv6_cidr_block]
-#   }
+  ingress {
+    description      = "TLS from VPC"
+    from_port        = 22
+    to_port          = 22
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    # ipv6_cidr_blocks = [aws_vpc.main.ipv6_cidr_block]
+  }
 
-#   egress {
-#     from_port        = 0
-#     to_port          = 0
-#     protocol         = "-1"
-#     cidr_blocks      = ["0.0.0.0/0"]
-#     # ipv6_cidr_blocks = ["::/0"]
-#   }
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    # ipv6_cidr_blocks = ["::/0"]
+  }
 
-#   tags = {
-#     Name = "peering-sg"
-#   }
-# }
+  tags = {
+    Name = "peering-sg"
+  }
+}
 # Create EC2 For Peering Connection
-# resource "aws_instance" "peering-ec2" {
-#   ami    = "ami-0ad21ae1d0696ad58"
-#   instance_type = "t2.micro"
-#   subnet_id     = aws_subnet.peer-subnet.id
-#   key_name   = "Mumbai-Linux"
-#   vpc_security_group_ids = [aws_security_group.peer-sg.id]
-#   tags = {
-#     Name = "peer-vgs"
-#   }
-# }
+resource "aws_instance" "peering-ec2" {
+  ami    = "ami-0ad21ae1d0696ad58"
+  instance_type = "t2.micro"
+  subnet_id     = aws_subnet.peer-subnet.id
+  key_name   = "Mumbai-Linux"
+  vpc_security_group_ids = [aws_security_group.peer-sg.id]
+  tags = {
+    Name = "peer-vgs"
+  }
+}
 # Create Peer Connection
-# resource "aws_vpc_peering_connection" "mypeer" {
-#   # peer_owner_id = 7673-9786-8500
-#   peer_vpc_id   = aws_vpc.peervpc.id
-#   vpc_id        = aws_vpc.myvpc.id
-#   auto_accept   = true
+resource "aws_vpc_peering_connection" "mypeer" {
+  # peer_owner_id = 7673-9786-8500
+  peer_vpc_id   = aws_vpc.peervpc.id
+  vpc_id        = aws_vpc.myvpc.id
+  auto_accept   = true
 
-#   tags = {
-#     Name = "VPC Peering between myvpc and peervpc"
-#   }
-# }
+  tags = {
+    Name = "VPC Peering between myvpc and peervpc"
+  }
+}
 
 # Create Peering Connection For Different Region
 # resource "aws_vpc" "diffvpc" {
