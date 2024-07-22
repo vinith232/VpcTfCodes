@@ -175,19 +175,19 @@ resource "aws_internet_gateway" "igw" {
     Name = "myigw"
   }
 }
-# EIP # Must Read Before Delete This
-resource "aws_eip" "myeip" {
-  vpc   =  true
-}
-#Nat Gate Way
-resource "aws_nat_gateway" "ngw" {
-  allocation_id = aws_eip.myeip.id
-  subnet_id     = aws_subnet.pub-subnet.id
+# # EIP # Must Read Before Delete This
+# resource "aws_eip" "myeip" {
+#   vpc   =  true
+# }
+# #Nat Gate Way
+# resource "aws_nat_gateway" "ngw" {
+#   allocation_id = aws_eip.myeip.id
+#   subnet_id     = aws_subnet.pub-subnet.id
   
-  tags = {
-    Name = "natgw"
-  }
-}
+#   tags = {
+#     Name = "natgw"
+#   }
+# }
 
 # Create 2nd VPC For Peering Connection
 resource "aws_vpc" "peervpc" {
