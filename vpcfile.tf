@@ -215,7 +215,7 @@ resource "aws_route_table" "peer-route" {
     
   }
   tags = {
-    Name = "Peer-route"
+    Name = "Peer-routes"
   }
   # depends_on = [aws_internet_gateway.igw]
 }
