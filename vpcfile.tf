@@ -65,7 +65,7 @@ resource "aws_route_table" "pvt-route" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    # gateway_id = aws_nat_gateway.ngw.id
+     gateway_id = aws_nat_gateway.ngw.id
     #vpc_peering_connection_id = aws_vpc_peering_connection.mypeer.id
   }
   tags = {
@@ -175,19 +175,19 @@ resource "aws_internet_gateway" "igw" {
     Name = "myigw"
   }
 }
-# # EIP # Must Read Before Delete This
-# resource "aws_eip" "myeip" {
-#   vpc   =  true
-# }
-# #Nat Gate Way
-# resource "aws_nat_gateway" "ngw" {
-#   allocation_id = aws_eip.myeip.id
-#   subnet_id     = aws_subnet.pub-subnet.id
+ # EIP # Must Read Before Delete This
+ resource "aws_eip" "myeip" {
+   vpc   =  true
+ }
+ #Nat Gate Way
+ resource "aws_nat_gateway" "ngw" {
+   allocation_id = aws_eip.myeip.id
+   subnet_id     = aws_subnet.pub-subnet.id
   
-#   tags = {
-#     Name = "natgw"
-#   }
-# }
+   tags = {
+     Name = "natgw"
+   }
+ }
 
 # Create 2nd VPC For Peering Connection
 # resource "aws_vpc" "peervpc" {
