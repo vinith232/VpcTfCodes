@@ -18,7 +18,7 @@ resource "aws_subnet" "pub-subnet" {
 resource "aws_subnet" "pvt-subnet" {
   vpc_id     = aws_vpc.myvpc.id
   cidr_block = "10.0.2.0/24"
-  availability_zone = "ap-south-1c"
+  availability_zone = "ap-south-1b"
 
   tags = {
     Name = "private-subnett"
