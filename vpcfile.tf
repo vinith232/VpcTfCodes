@@ -10,7 +10,7 @@ resource "aws_subnet" "pub-subnet" {
   availability_zone = "ap-south-1a"
 
   tags = {
-    Name = "public-subnettt"
+    Name = "public-subnett"
   }
 }
 
