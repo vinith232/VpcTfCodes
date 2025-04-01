@@ -1,16 +1,19 @@
 # Create New VPC
 resource "aws_vpc" "myvpc" {
   cidr_block = "10.0.0.0/16"
+
+  tags = {
+    Name = "MY-VPC"
 }
 
 # Create Pub Subnet
 resource "aws_subnet" "pub-subnet" {
   vpc_id     = aws_vpc.myvpc.id
   cidr_block = "10.0.1.0/24"
-  availability_zone = "ap-south-1b"
+  availability_zone = "eu-west-2a"
 
   tags = {
-    Name = "public-subnettt"
+    Name = "public-subnet"
   }
 }
 
@@ -18,10 +21,10 @@ resource "aws_subnet" "pub-subnet" {
 resource "aws_subnet" "pvt-subnet" {
   vpc_id     = aws_vpc.myvpc.id
   cidr_block = "10.0.2.0/24"
-  availability_zone = "ap-south-1a"
+  availability_zone = "eu-west-2b"
 
   tags = {
-    Name = "private-subnett"
+    Name = "private-subnet"
   }
 }
 # Routing Table For Public
@@ -35,7 +38,7 @@ resource "aws_route_table" "pub-route" {
   tags = {
     Name = "Public-route"
   }
-  # depends_on = [aws_internet_gateway.igw]
+  depends_on = [aws_internet_gateway.igw]
 }
 
 # Crete Route Table Association For Public
@@ -131,7 +134,7 @@ resource "aws_instance" "public-ec2" {
   ami    = "ami-0ad21ae1d0696ad58"
   instance_type = "t2.small"
   subnet_id     = aws_subnet.pub-subnet.id
-  #key_name   = "ajith22"
+  #key_name   = "AjithS3114"
   associate_public_ip_address = true
   vpc_security_group_ids = [aws_security_group.pub-sg.id]
   tags = {
@@ -144,7 +147,7 @@ resource "aws_instance" "private-ec2" {
   ami    = "ami-0ad21ae1d0696ad58"
   instance_type = "t2.small"
   subnet_id     = aws_subnet.pvt-subnet.id
-  #key_name   = "ajith22"
+  #key_name   = "AjithS3114"
   vpc_security_group_ids = [aws_security_group.pvt-sg.id]
   tags = {
     Name = "Private-vgs"
